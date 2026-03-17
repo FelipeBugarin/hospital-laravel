@@ -1,35 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use App\Models\Paciente;
+use App\Http\Controllers\PacienteController;
 
-/*
-
-|--------------------------------------------------------------------------
-| ARQUIVO DE ROTAS - O MAESTRO DO SISTEMA
-|--------------------------------------------------------------------------
-*/
-
-// 1. ROTA PARA MOSTRAR A LISTA (O seu antigo "lista.php")
-Route::get('/pacientes', function () {
-    $pacientes = Paciente::all(); // Busca no banco via Model
-    return view('pacientes', ['lista' => $pacientes]);
-});
-
-// 2. ROTA PARA MOSTRAR O FORMULÁRIO (O seu antigo "cadastro.php")
-Route::get('/pacientes/novo', function () {
-    return view('cadastro_paciente');
-});
-
-// 3. ROTA PARA PROCESSAR O SALVAMENTO (O seu antigo "processar_cadastro.php")
-Route::post('/pacientes/salvar', function (Request $request) {
-    // No PHP puro você usaria $_POST['nome']. No Laravel usamos $request->nome.
-    Paciente::create([
-        'nome' => $request->nome,
-        'status' => $request->status,
-    ]);
-
-    // Após salvar, ele redireciona para a lista
+// Página inicial (opcional, redireciona para a lista)
+Route::get('/', function () {
     return redirect('/pacientes');
 });
+
+// Rotas do Hospital
+Route::get('/pacientes', [PacienteController::class, 'index']);
+Route::get('/pacientes/novo', [PacienteController::class, 'create']);
+Route::post('/pacientes/salvar', [PacienteController::class, 'store']);
+Route::delete('/pacientes/{id}', [PacienteController::class, 'destroy']);
+Route::get('/pacientes/{id}/editar', [PacienteController::class, 'edit']);
+Route::put('/pacientes/{id}', [PacienteController::class, 'update']);
