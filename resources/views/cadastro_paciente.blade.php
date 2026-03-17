@@ -1,38 +1,41 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Hospital - Novo Paciente</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-10">
-    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
-        <h1 class="text-xl font-bold mb-4">Cadastrar Novo Paciente</h1>
+@extends('layouts.app')
+
+@section('titulo', 'Cadastrar Novo Paciente')
+
+@section('conteudo')
+    <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-10">
+        <!-- TÍTULO E BOTÃO VOLTAR -->
+        <div class="flex justify-between items-center mb-8 border-b pb-4">
+            <h1 class="text-2xl font-bold text-blue-600 font-sans">🩺 Novo Cadastro</h1>
+            <a href="/pacientes" class="text-gray-500 hover:text-gray-700 text-sm font-semibold transition">
+                ← Voltar para a lista
+            </a>
+        </div>
         
-        <form action="/pacientes/salvar" method="POST">
-            @csrf <!-- ESSENCIAL: Proteção de segurança do Laravel -->
+        <form action="/pacientes/salvar" method="POST" class="space-y-6">
+            @csrf <!-- Proteção obrigatória do Laravel -->
             
-            <div class="mb-4">
-                <label class="block mb-1">Nome do Paciente:</label>
-                <input type="text" name="nome" class="w-full border p-2 rounded" required>
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">Nome Completo do Paciente:</label>
+                <input type="text" name="nome" 
+                       class="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition" 
+                       placeholder="Ex: João da Silva" required>
             </div>
 
-            <div class="mb-4">
-                <label class="block mb-1">Status:</label>
-                <select name="status" class="w-full border p-2 rounded">
-                    <option value="Estável">Estável</option>
-                    <option value="Observação">Observação</option>
-                    <option value="Crítico">Crítico</option>
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">Status Inicial:</label>
+                <select name="status" 
+                        class="w-full border-2 border-gray-200 p-3 rounded-lg focus:border-blue-500 focus:outline-none transition">
+                    <option value="Estável">✅ Estável</option>
+                    <option value="Observação">⚠️ Observação</option>
+                    <option value="Crítico">🚨 Crítico</option>
                 </select>
             </div>
 
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                Salvar Paciente
+            <button type="submit" 
+                    class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 shadow-md transition duration-300 transform hover:scale-[1.02]">
+                Salvar Cadastro
             </button>
-            <a href="/pacientes" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-bold transition">
-                Voltar para a Lista
-            </a>
         </form>
     </div>
-</body>
-</html>
+@endsection
