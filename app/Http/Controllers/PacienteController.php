@@ -7,13 +7,50 @@ use App\Models\Paciente;
 
 class PacienteController extends Controller
 {
-    // Lista todos os pacientes (Antigo lista.php)
-    public function index()
-    {
-        $pacientes = Paciente::all();
-        return view('pacientes', ['lista' => $pacientes]);
-    }
 
+    public function index(Request $request)
+    {
+        // Contadores Fixos (Sempre mostram o total real do hospital)
+        $contagem = [
+            'total' => Paciente::count(),
+            'criticos' => Paciente::where('status', 'Crítico')->count(),
+            'observacao' => Paciente::where('status', 'Observação')->count(),
+            'alta' => Paciente::where('status', 'Alta')->count(),
+        ];
+
+        // Iniciamos a consulta sem executar ainda
+        $query = Paciente::query();
+
+        // Filtro por Nome
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->nome . '%');
+        }
+
+        // Filtro por Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pacientes = $query->get();
+
+        // Filtro por Prazo (Feito via Coleção, pois a lógica está no Model)
+        if ($request->filled('prazo')) {
+            $pacientes = $pacientes->filter(function ($p) use ($request) {
+                $progresso = $p->progresso;
+                if ($request->prazo == 'fora') return $progresso > 100 && $p->status != 'Alta';
+                if ($request->prazo == 'atrasado') return $progresso > 50 && $progresso <= 100 && $p->status != 'Alta';
+                if ($request->prazo == 'prazo') return $progresso <= 50 && $p->status != 'Alta';
+                return true;
+            });
+        }
+
+        // Se a requisição for AJAX, retorna apenas um pedaço da view
+        if ($request->ajax()) {
+            return view('pacientes_tabela', ['lista' => $pacientes]);
+        }
+
+        return view('pacientes', ['lista' => $pacientes, 'contagem' => $contagem]);
+    }
     // Mostra o formulário de cadastro (Antigo cadastro.php)
     public function create()
     {
@@ -77,6 +114,5 @@ class PacienteController extends Controller
 
         return back()->with('sucesso', 'Status atualizado!');
     }
-
 
 }
