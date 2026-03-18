@@ -15,3 +15,4 @@ Route::post('/pacientes/salvar', [PacienteController::class, 'store']);
 Route::delete('/pacientes/{id}', [PacienteController::class, 'destroy']);
 Route::get('/pacientes/{id}/editar', [PacienteController::class, 'edit']);
 Route::put('/pacientes/{id}', [PacienteController::class, 'update']);
+Route::patch('/pacientes/{id}/status', [PacienteController::class, 'updateStatus']);
