@@ -21,14 +21,20 @@ class PacienteController extends Controller
     }
 
     // Salva o novo paciente no banco (Antigo processar_cadastro.php)
+    // Salva o novo paciente (Versão Única e Validada)
     public function store(Request $request)
     {
-        Paciente::create([
-            'nome' => $request->nome,
-            'status' => $request->status,
+        $request->validate([
+            'nome' => 'required|min:3',
+            'status' => 'required',
+        ], [
+            'nome.required' => 'O nome do paciente é obrigatório.',
+            'nome.min' => 'O nome deve ter pelo menos 3 caracteres.',
         ]);
 
-        return redirect('/pacientes');
+        Paciente::create($request->all());
+
+        return redirect('/pacientes')->with('sucesso', 'Paciente cadastrado com sucesso!');
     }
 
     // Deleta um paciente
@@ -48,15 +54,29 @@ class PacienteController extends Controller
     }
 
     // Atualiza os dados de um paciente
+    // Atualiza os dados (Também com validação!)
     public function update(Request $request, $id)
     {
-        $paciente = Paciente::findOrFail($id);
-        $paciente->update([
-            'nome' => $request->nome,
-            'status' => $request->status,
+        $request->validate([
+            'nome' => 'required|min:3',
+            'status' => 'required',
+        ], [
+            'nome.required' => 'O nome é obrigatório ao editar.',
         ]);
 
-        return redirect('/pacientes');
+        $paciente = Paciente::findOrFail($id);
+        $paciente->update($request->all());
+
+        return redirect('/pacientes')->with('sucesso', 'Paciente atualizado com sucesso!');
     }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $paciente = Paciente::findOrFail($id);
+        $paciente->update(['status' => $request->status]);
+
+        return back()->with('sucesso', 'Status atualizado!');
+    }
+
 
 }
