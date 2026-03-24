@@ -1,8 +1,11 @@
-@extends('layouts.app')
+<x-app-layout>
+    <!-- Isso aqui é o título que aparece na barra branca do topo -->
+    {{-- <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            🏥 Painel do Hospital - Pacientes
+        </h2>
+    </x-slot> --}}
 
-@section('titulo', 'Lista de Pacientes')
-
-@section('conteudo')
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg mt-10">
         <!-- CABEÇALHO COM BOTÃO -->
         <div class="flex justify-between items-center mb-6 border-b pb-4">
@@ -121,4 +124,4 @@
     form.addEventListener('submit', (e) => e.preventDefault());
 </script>
 
-@endsection
+</x-app-layout>

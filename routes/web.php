@@ -1,18 +1,30 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PacienteController;
+use Illuminate\Support\Facades\Route;
 
-// Página inicial (opcional, redireciona para a lista)
 Route::get('/', function () {
-    return redirect('/pacientes');
+    return redirect('/login');
 });
 
-// Rotas do Hospital
-Route::get('/pacientes', [PacienteController::class, 'index']);
-Route::get('/pacientes/novo', [PacienteController::class, 'create']);
-Route::post('/pacientes/salvar', [PacienteController::class, 'store']);
-Route::delete('/pacientes/{id}', [PacienteController::class, 'destroy']);
-Route::get('/pacientes/{id}/editar', [PacienteController::class, 'edit']);
-Route::put('/pacientes/{id}', [PacienteController::class, 'update']);
-Route::patch('/pacientes/{id}/status', [PacienteController::class, 'updateStatus']);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // SUAS ROTAS DO HOSPITAL (Devolvendo elas para o sistema)
+    Route::get('/pacientes', [PacienteController::class, 'index'])->name('pacientes.index');
+    Route::get('/pacientes/novo', [PacienteController::class, 'create'])->name('pacientes.create');
+    Route::post('/pacientes/salvar', [PacienteController::class, 'store'])->name('pacientes.store');
+    Route::delete('/pacientes/{id}', [PacienteController::class, 'destroy'])->name('pacientes.destroy');
+    Route::get('/pacientes/{id}/editar', [PacienteController::class, 'edit'])->name('pacientes.edit');
+    Route::put('/pacientes/{id}', [PacienteController::class, 'update'])->name('pacientes.update');
+    Route::patch('/pacientes/{id}/status', [PacienteController::class, 'updateStatus'])->name('pacientes.updateStatus');
+});
+
+require __DIR__.'/auth.php';
