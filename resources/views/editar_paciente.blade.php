@@ -1,12 +1,8 @@
-@extends('layouts.app')
-
-@section('titulo', 'Cadastrar Novo Paciente')
-
-@section('conteudo')
+<x-app-layout>
     <div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-lg mt-10">
         <!-- TÍTULO E BOTÃO VOLTAR -->
         <div class="flex justify-between items-center mb-8 border-b pb-4">
-            <h1 class="text-2xl font-bold text-blue-600 font-sans">🩺 Novo Cadastro</h1>
+            <h1 class="text-2xl font-bold text-blue-600 font-sans">🩺 Editar Cadastro</h1>
             <a href="/pacientes" class="text-gray-500 hover:text-gray-700 text-sm font-semibold transition">
                 ← Voltar para a lista
             </a>
@@ -77,4 +73,4 @@
             </button>
         </form>
     </div>
-@endsection
+</x-app-layout>
