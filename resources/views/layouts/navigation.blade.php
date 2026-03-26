@@ -15,9 +15,17 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <!-- ADICIONE ESTE AQUI: -->
+                    <!-- Paciente Link: -->
                     <x-nav-link :href="route('pacientes.index')" :active="request()->routeIs('pacientes.index')">
                         {{ __('Pacientes') }}
+                    </x-nav-link>
+                    <!-- Medico Link: -->
+                    <x-nav-link :href="route('medicos.index')" :active="request()->routeIs('medicos.index')">
+                        {{ __('Médicos') }}
+                    </x-nav-link>
+                    <!-- Exames Link: -->
+                    <x-nav-link :href="route('exames.index')" :active="request()->routeIs('exames.index')">
+                        {{ __('Exames') }}
                     </x-nav-link>
                 </div>
             </div>
