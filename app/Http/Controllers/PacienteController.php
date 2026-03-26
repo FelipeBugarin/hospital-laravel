@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Paciente;
+use App\Models\Agendamento;
+use App\Models\Exame;
 
 class PacienteController extends Controller
 {
 
     public function index(Request $request)
     {
-        // Contadores Fixos (Sempre mostram o total real do hospital)
+        // 1. Contadores Fixos
         $contagem = [
             'total' => Paciente::count(),
             'criticos' => Paciente::where('status', 'Crítico')->count(),
@@ -18,7 +20,7 @@ class PacienteController extends Controller
             'alta' => Paciente::where('status', 'Alta')->count(),
         ];
 
-        // Iniciamos a consulta sem executar ainda
+        // 2. Consulta de Pacientes
         $query = Paciente::query();
 
         // Filtro por Nome
@@ -31,9 +33,9 @@ class PacienteController extends Controller
             $query->where('status', $request->status);
         }
 
-        $pacientes = $query->get();
+        $pacientes = $query->with(['agendamentos.exame', 'agendamentos.medico'])->get();
 
-        // Filtro por Prazo (Feito via Coleção, pois a lógica está no Model)
+        // 3. Filtro de Prazo (Coleção)
         if ($request->filled('prazo')) {
             $pacientes = $pacientes->filter(function ($p) use ($request) {
                 $progresso = $p->progresso;
@@ -44,20 +46,44 @@ class PacienteController extends Controller
             });
         }
 
-        // Se a requisição for AJAX, retorna apenas um pedaço da view
+        // 4. Buscar médicos para o Modal de Agendamento
+        $medicos = \App\Models\Medico::all();
+        $exames = \App\Models\Exame::all();
+
+        // 5. Se a requisição for AJAX, retorna apenas um pedaço da view
         if ($request->ajax()) {
-            return view('pacientes_tabela', ['lista' => $pacientes]);
+            return view('pacientes_tabela', [
+                'lista' => $pacientes,
+                'medicos' => $medicos,
+                'exames' => $exames
+            ]);
         }
 
-        return view('pacientes', ['lista' => $pacientes, 'contagem' => $contagem]);
+        $exames = \App\Models\Exame::all();
+
+        return view('pacientes', [
+            'lista' => $pacientes, 
+            'contagem' => $contagem,
+            'medicos' => $medicos,
+            'exames' => $exames // <--- Certifique-se de que isso está aqui!
+        ]);
+
+        // Se for acesso normal, retorna a página completa
+        return view('pacientes', [
+            'lista' => $pacientes, 
+            'contagem' => $contagem,
+            'medicos' => $medicos,
+            'exames' => $exames
+        ]);
+
     }
+
     // Mostra o formulário de cadastro (Antigo cadastro.php)
     public function create()
     {
         return view('cadastro_paciente');
     }
 
-    // Salva o novo paciente no banco (Antigo processar_cadastro.php)
     // Salva o novo paciente (Versão Única e Validada)
     public function store(Request $request)
     {
@@ -114,5 +140,46 @@ class PacienteController extends Controller
 
         return back()->with('sucesso', 'Status atualizado!');
     }
+
+    public function agendarExame(Request $request, $id)
+    {
+        // Criamos o registro na tabela de AGENDAMENTOS
+        Agendamento::create([
+            'paciente_id' => $id,
+            'medico_id' => $request->medico_id,
+            'exame_id' => $request->exame_id,
+            'user_id' => auth()->id(),
+            'data_prevista' => $request->data_exame,
+            'status' => 'Agendado'
+        ]);
+
+        // 2. ATUALIZAMOS O STATUS DO PACIENTE (O passo que faltava!)
+        $paciente = Paciente::findOrFail($id);
+        $paciente->update(['status' => 'Exame Agendado']);
+
+        return back()->with('sucesso', 'Exame agendado no histórico do paciente!');
+    }
+
+    public function cancelarAgendamento(Request $request, $id)
+        {
+            // 1. Buscamos o agendamento específico na tabela nova
+            $agendamento = Agendamento::findOrFail($id);
+            
+            // 2. Atualizamos o status do agendamento e gravamos a auditoria
+            $agendamento->update([
+                'status' => 'Cancelado',
+                'justificativa_cancelamento' => $request->justificativa,
+                'data_cancelamento' => now(),
+                'user_cancelamento_id' => auth()->id(),
+            ]);
+
+            // 3. Devolvemos o Paciente para um status comum (Estável, Crítico, etc)
+            $paciente = Paciente::findOrFail($agendamento->paciente_id);
+            $paciente->update([
+                'status' => $request->status // O novo status escolhido no modal
+            ]);
+
+            return back()->with('sucesso', 'Exame cancelado e registrado no histórico!');
+        }
 
 }
