@@ -106,7 +106,7 @@ class PacienteController extends Controller
         $paciente = Paciente::findOrFail($id);
         $paciente->delete();
 
-        return redirect('/pacientes');
+        return redirect('/pacientes')->with('sucesso', 'Paciente removido com sucesso!');
     }
 
     // Mostra a tela de edição de um paciente

@@ -110,9 +110,16 @@
 
                                 <hr class="border-gray-100">
                                 
-                                <button type="button" onclick="confirmarExclusao(this)" class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
-                                    🗑️ Remover Registro
-                                </button>
+                                <!-- O formulário agora envolve o botão para o 'closest(form)' funcionar -->
+                                <form action="{{ route('pacientes.destroy', $p->id) }}" method="POST" class="m-0">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" 
+                                        onclick="confirmarExclusao(this)" 
+                                        class="block w-full px-4 py-2 text-start text-sm leading-5 text-red-600 hover:bg-red-50 transition duration-150 ease-in-out">
+                                        🗑️ Remover Registro
+                                    </button>
+                                </form>
                             </x-slot>
                         </x-dropdown>
                     </td>

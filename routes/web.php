@@ -5,6 +5,7 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\ExameController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UsuarioController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -32,11 +33,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/medicos', [MedicoController::class, 'index'])->name('medicos.index');
     Route::get('/medicos/novo', [MedicoController::class, 'create'])->name('medicos.create');
     Route::post('/medicos/salvar', [MedicoController::class, 'store'])->name('medicos.store');
+    Route::delete('/medicos/{id}', [MedicoController::class, 'destroy'])->name('medicos.destroy');
+    Route::get('/medicos/{id}/editar', [MedicoController::class, 'edit'])->name('medicos.edit');
+    Route::put('/medicos/{id}', [MedicoController::class, 'update'])->name('medicos.update');
     //Rotas de Exames
     Route::get('/exames', [ExameController::class, 'index'])->name('exames.index');
     Route::post('/exames/salvar', [ExameController::class, 'store'])->name('exames.store');
-    //Cancelar Exame
     Route::patch('/agendamentos/{id}/cancelar', [PacienteController::class, 'cancelarAgendamento'])->name('agendamentos.cancelar');
+    //Rotas de Administração de Usuários
+    Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index')->middleware('admin');
+    Route::patch('/usuarios/{id}/aprovar', [UsuarioController::class, 'aprovar'])->name('usuarios.aprovar')->middleware('admin');
 
 });
 

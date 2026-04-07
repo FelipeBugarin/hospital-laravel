@@ -48,6 +48,15 @@
                 });
             @endif
 
+            @if(session('erro'))
+                Swal.fire({
+                    title: 'Acesso Negado',
+                    text: "{{ session('erro') }}",
+                    icon: 'error',
+                    confirmButtonColor: '#d33'
+                });
+            @endif
+
             // 2. Confirmação de Exclusão Moderna
             function confirmarExclusao(botao) {
                 Swal.fire({
