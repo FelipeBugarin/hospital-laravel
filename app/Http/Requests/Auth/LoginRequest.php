@@ -50,6 +50,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // --- NOVA LÓGICA DE APROVAÇÃO ---
+        $user = Auth::user();
+        if (!$user->is_approved) {
+            Auth::logout(); // Desloga o usuário imediatamente
+
+            throw ValidationException::withMessages([
+                'email' => 'Sua conta ainda aguarda aprovação de um administrador.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

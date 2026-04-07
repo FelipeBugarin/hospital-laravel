@@ -46,6 +46,18 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <div class="pt-2 pb-1 border-t border-gray-200">
+                            <div class="px-4 text-xs text-gray-400 uppercase font-bold mb-2">Administração</div>
+                            
+                            @if(Auth::id() === 1)
+                                <x-dropdown-link :href="route('usuarios.index')" class="text-blue-600 font-bold">
+                                    👥 Gerenciar Usuários
+                                </x-dropdown-link>
+                            @endif
+                        </div>
+
+                        <hr class="border-gray-100">
+
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>

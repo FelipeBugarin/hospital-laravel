@@ -40,12 +40,14 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'is_approved' => false, // Novo campo para controle de aprovação
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return redirect(route('dashboard', absolute: false));
-    }
+        // Auth::login($user);
+        
+        // Redireciona para o login com uma mensagem de aviso
+        return redirect()->route('login')->with('status', 'Cadastro realizado! Agora, aguarde a aprovação de um administrador para acessar o sistema.');
+        }
 }

@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_approved', // Novo campo para controle de aprovação
     ];
 
     /**
