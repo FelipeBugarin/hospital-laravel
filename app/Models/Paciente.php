@@ -53,4 +53,9 @@ class Paciente extends Model
         return ($total > 0) ? ($passado / $total) * 100 : 0;
     }
 
+    public function medico()
+    {
+        return $this->belongsTo(Medico::class);
+    }
+    
 }
