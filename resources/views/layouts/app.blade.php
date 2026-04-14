@@ -75,6 +75,8 @@
                 })
             }
         </script>
-
+        
+        <!-- Local onde os scripts das páginas filhas serão "empilhados" -->
+        @stack('scripts')
     </body>
 </html>

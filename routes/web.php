@@ -6,14 +6,17 @@ use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\ExameController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UsuarioController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PainelController;
 
 Route::get('/', function () {
     return redirect('/login');
 });
+Route::get('/painel', [PainelController::class, 'index'])->name('painel.index')->middleware('auth');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
